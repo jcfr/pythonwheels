@@ -43,6 +43,7 @@ def annotate_wheels(packages):
     for index, package in enumerate(packages):
         print(index + 1, num_packages, package['name'])
         has_wheel = False
+        is_universal = True
         url = get_json_url(package['name'])
         response = SESSION.get(url)
         if response.status_code != 200:
@@ -52,7 +53,10 @@ def annotate_wheels(packages):
         for download in data['urls']:
             if download['packagetype'] == 'bdist_wheel':
                 has_wheel = True
+            if has_wheel and 'none-any' not in download['filename']:
+                is_universal = False
         package['wheel'] = has_wheel
+        package['universal'] = is_universal
 
         # Display logic. I know, I'm sorry.
         package['value'] = 1
@@ -60,6 +64,9 @@ def annotate_wheels(packages):
             package['css_class'] = 'success'
             package['icon'] = u'\u2713'  # Check mark
             package['title'] = 'This package provides a wheel.'
+            if not is_universal:
+                package['css_class'] = 'success_compiled'
+                package['title'] = 'This package provides a platform specific wheel.'
         else:
             package['css_class'] = 'default'
             package['icon'] = u'\u2717'  # Ballot X
