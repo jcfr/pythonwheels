@@ -43,7 +43,7 @@ def annotate_wheels(packages):
     for index, package in enumerate(packages):
         print(index + 1, num_packages, package['name'])
         has_wheel = False
-        is_universal = True
+        is_universal = False
         url = get_json_url(package['name'])
         response = SESSION.get(url)
         if response.status_code != 200:
@@ -53,8 +53,8 @@ def annotate_wheels(packages):
         for download in data['urls']:
             if download['packagetype'] == 'bdist_wheel':
                 has_wheel = True
-            if has_wheel and 'none-any' not in download['filename']:
-                is_universal = False
+            if has_wheel and 'none-any' in download['filename']:
+                is_universal = True
         package['wheel'] = has_wheel
         package['universal'] = is_universal
 
