@@ -1,6 +1,9 @@
 import datetime
 import json
-import xmlrpc.client
+try:
+    import xmlrpclib
+except ImportError:
+    import xmlrpc.client as xmlrpclib
 
 import pytz
 import requests
@@ -11,14 +14,13 @@ BASE_URL = 'https://pypi.python.org/pypi'
 DEPRECATED_PACKAGES = set((
     'distribute',
     'django-social-auth',
-    'BeautifulSoup'
 ))
 
 SESSION = requests.Session()
 
 
 def req_rpc(method, *args):
-    payload = xmlrpc.client.dumps(args, method)
+    payload = xmlrpclib.dumps(args, method)
 
     response = SESSION.post(
         BASE_URL,
@@ -26,7 +28,7 @@ def req_rpc(method, *args):
         headers={'Content-Type': 'text/xml'},
     )
     if response.status_code == 200:
-        result = xmlrpc.client.loads(response.content)[0][0]
+        result = xmlrpclib.loads(response.content)[0][0]
         return result
     else:
         # Some error occurred
@@ -70,8 +72,7 @@ def annotate_wheels(packages):
         else:
             package['css_class'] = 'default'
             package['icon'] = u'\u2717'  # Ballot X
-            package['title'] = ('This package has no wheel archives uploaded '
-                                '(yet!).')
+            package['title'] = 'This package has no wheel archives uploaded (yet!).'
 
 
 def get_top_packages():
