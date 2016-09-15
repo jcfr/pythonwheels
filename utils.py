@@ -1,6 +1,9 @@
 import datetime
 import json
-import xmlrpclib
+try:
+    import xmlrpclib
+except ImportError:
+    import xmlrpc.client as xmlrpclib
 
 import pytz
 import requests
