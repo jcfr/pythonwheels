@@ -23,6 +23,15 @@ def main():
     wheels_platform_specific = list(filter(is_platform_specific, wheels))
     print("Number of platform specific wheels: %s" % len(wheels_platform_specific))
 
+    max_download = wheels_platform_specific[0]['downloads']
+    print("Max downloads: %s" % max_download)
+    print("Min downloads: %s" % wheels_platform_specific[-1]['downloads'])
+
+    # Now generate some text that can copied into a "world cloud" generator
+    for p in wheels_platform_specific:
+        percent = p['downloads'] * 100 / max_download
+        print((p['name'] + ' ') * int(percent))
+
     save_to_file(packages, 'results.json')
     generate_svg_wheel(packages, TO_CHART)
 
