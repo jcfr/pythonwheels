@@ -82,6 +82,14 @@ def not_deprecated(package):
     return package['name'] not in DEPRECATED_PACKAGES
 
 
+def is_wheel(package):
+    return package['wheel']
+
+
+def is_platform_specific(package):
+    return not package['universal']
+
+
 def remove_irrelevant_packages(packages, limit):
     print('Removing cruft...')
     active_packages = list(filter(not_deprecated, packages))
